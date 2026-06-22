@@ -24,6 +24,11 @@ jobs:
         with:
           python-version: '3.14'
 
+      - name: Install dependencies into package
+        run: |
+          cd 01-app-service-slot
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+
       # 🛠️ Local Build Section (Optional)
       # The following section in your workflow is designed to catch build issues early on the client side, before deployment. This can be helpful for debugging and validation. However, if this step significantly increases deployment time and early detection is not critical for your workflow, you may remove this section to streamline the deployment process.
       - name: Zip artifact
