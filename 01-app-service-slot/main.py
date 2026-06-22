@@ -22,7 +22,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 
 app = FastAPI(title="Azure Lab App")
 
-APP_VERSION = os.getenv("APP_VERSION", "2.0.0")
+APP_VERSION = os.getenv("APP_VERSION", "3.0.0")
 
 
 def host_name() -> str:
