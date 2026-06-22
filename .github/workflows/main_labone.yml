@@ -69,7 +69,7 @@ jobs:
         id: stage-to-webapp
         with:
           app-name: 'LabOne'
-          slot-name: 'Staging'
+          slot-name: 'staging'
           package: release.zip
   
   deploy-production:
