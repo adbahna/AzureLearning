@@ -8,8 +8,8 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
+      - staging
+      
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -42,11 +42,40 @@ jobs:
         with:
           name: python-app
           path: release.zip
-        
 
-  deploy:
-    runs-on: ubuntu-latest
+  deploy-staging:
     needs: build
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: python-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_01BBE693233246DFB215E2505358A0AE }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C5F09D093CF749369297BB7AACED59B3 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F7071250ECE04DCA8B9474CEEAFCB302 }}
+
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v3
+        id: stage-to-webapp
+        with:
+          app-name: 'LabOne'
+          slot-name: 'Staging'
+          package: release.zip
+  
+  deploy-production:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
